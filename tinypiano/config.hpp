@@ -129,16 +129,16 @@ enum KeyCode {
 };
 
 enum FunctionId : uint8_t {
-    kMoveMode  = 101,
+    kMoveMode       = 0x80, // 1000 0000
 
-    kLeftSostenuto = 102,
-    kRightSostenuto = 103,
+    kLeftSostenuto  = 0x90, // 1001 0000
+    kRightSostenuto = 0x91, // 1001 0001
 
-    kLeftAdjOctave = 104,
-    kRightAdjOctave = 105,
+    kLeftAdjOctave  = 0xA0, // 1010 0000
+    kRightAdjOctave = 0xA1, // 1010 0001
 
-    kLeftIntensity = 106,
-    kRightIntensity = 107,
+    kLeftIntensity  = 0xC0, // 1100 0000
+    kRightIntensity = 0xC1, // 1100 0001
 };
 
 struct KeyboardLayout {
@@ -160,7 +160,7 @@ struct KeyboardMapping {
         uint8_t note;
         int8_t pith;
         int8_t modifier : 4;  // 1: up, -1: down
-        int8_t channel : 4; // 0, 1
+        int8_t left : 4; // 1, 0
     } keys[127];
 };
 
@@ -173,14 +173,22 @@ struct GlobalData {
     int8_t lOffOctave = 0;
     int8_t rOffOctave = 0;
 
-    int lIntensity = 40;
-    int rIntensity = 50;
+    int lIntensity = 50;
+    int rIntensity = 40;
 };
 
+const char*     config_mode_text(int index);
 
 void            config_set_resource_path(const std::string& path);
 
+void            config_chg_mode(int modifier);
+void            config_chg_octave(uint8_t fn, int modifier);
+void            config_chg_intensity(uint8_t fn, int modifier);
+
 std::string     config_get_fn_text(FunctionId fn, int modifier);
+
+bool            config_is_fn(int num);
+uint8_t         config_real_note(const KeyboardMapping::Info& map);
 
 KeyboardLayout  config_get_keyboard_layout();
 

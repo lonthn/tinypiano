@@ -238,7 +238,8 @@ void DrawContext::draw_note(CFStringRef note, int pith, int modifier, CGRect rec
     CFRelease(line);
 }
 
-void DrawContext::draw_mbutton(MButtonStyle style, CGRect rect, CGColorRef back, CGColorRef fore) {
+void DrawContext::draw_mbutton(MButtonStyle style, CGRect rect,
+                               CGColorRef back, CGColorRef fore) {
     //real_rect(&rect);
     
     rect.size.width = rect.size.height;
@@ -274,6 +275,26 @@ void DrawContext::draw_mbutton(MButtonStyle style, CGRect rect, CGColorRef back,
         float r = rect.size.width / 6.0;
         fill_rrect(CGRectMake(center.x-r, center.y-r, r*2, r*2), 2, false);
     }
+}
+
+void DrawContext::draw_string(CFStringRef str, CGRect rect, CTFontRef font,
+                              CGColorRef color, VertiAlign valign) {
+    set_fill_color(color);
+    
+    CTLineRef line = create_line(str, font, color);
+    CGSize    size = line_get_size(line);
+    
+    CGPoint point = CGPointMake(rect.origin.x + ((rect.size.width-size.width)/2), 0);
+    if (valign == VALIGN_TOP) {
+        point.y = rect.origin.y;
+    } else if (valign == VALIGN_MIDDLE) {
+        point.y = rect.origin.y + (rect.size.height-size.height)/2;
+    } else if (valign == VALIGN_BOTTOM) {
+        point.y = rect.origin.y + rect.size.height - size.height;
+    }
+    draw_line(line, point, false);
+    
+    CFRelease(line);
 }
 
 CGRect DrawContext::real_rect(CGRect rect) {

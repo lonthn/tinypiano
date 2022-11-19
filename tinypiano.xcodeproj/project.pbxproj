@@ -12,15 +12,19 @@
 		1B704A3E28C0829A00B50BFE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B704A3D28C0829A00B50BFE /* Assets.xcassets */; };
 		1B704A4128C0829A00B50BFE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B704A3F28C0829A00B50BFE /* Main.storyboard */; };
 		1B704A4328C0829A00B50BFE /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1B704A4228C0829A00B50BFE /* main.mm */; };
+		1BA306F229191D4A00F15B1D /* libjsoncpp.1.9.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BA306F129191D4A00F15B1D /* libjsoncpp.1.9.5.dylib */; };
+		1BA306FD291A6FB400F15B1D /* license.md in Resources */ = {isa = PBXBuildFile; fileRef = 1BA306F9291A6FB400F15B1D /* license.md */; };
+		1BA306FE291A6FB400F15B1D /* ofxVstHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BA306FA291A6FB400F15B1D /* ofxVstHost.cpp */; };
+		1BA30701291A709300F15B1D /* midievent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BA30700291A709300F15B1D /* midievent.cpp */; };
+		1BA30708291A748500F15B1D /* audio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BA30706291A748500F15B1D /* audio.cpp */; };
+		1BA30711291A926D00F15B1D /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BA30710291A926D00F15B1D /* AudioToolbox.framework */; };
 		1BB40E0E28C1AA8B00734BFC /* MainView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1BB40E0D28C1AA8B00734BFC /* MainView.mm */; };
 		1BB40E1328C3280100734BFC /* keyboard_layout.json in Resources */ = {isa = PBXBuildFile; fileRef = 1BB40E1228C3280100734BFC /* keyboard_layout.json */; };
 		1BB40E1628C32AA600734BFC /* config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BB40E1428C32AA600734BFC /* config.cpp */; };
-		1BB40E1E28C5EB1A00734BFC /* libjsoncpp.1.9.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BB40E1C28C5EA1300734BFC /* libjsoncpp.1.9.5.dylib */; };
 		1BB40E2128CC745200734BFC /* drawcontext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BB40E1F28CC745200734BFC /* drawcontext.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		1B704A3428C0829600B50BFE /* tinypiano.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = tinypiano.app; path = /Users/zq/git/tinypiano/build/Debug/tinypiano.app; sourceTree = "<absolute>"; };
 		1B704A3728C0829600B50BFE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1B704A3828C0829600B50BFE /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		1B704A3A28C0829600B50BFE /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
@@ -29,14 +33,30 @@
 		1B704A4028C0829A00B50BFE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		1B704A4228C0829A00B50BFE /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		1B704A4428C0829A00B50BFE /* tinypiano.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = tinypiano.entitlements; sourceTree = "<group>"; };
+		1BA306ED29191B8200F15B1D /* tinypiano.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tinypiano.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1BA306F129191D4A00F15B1D /* libjsoncpp.1.9.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjsoncpp.1.9.5.dylib; path = tinypiano/libjsoncpp.1.9.5.dylib; sourceTree = "<group>"; };
+		1BA306F9291A6FB400F15B1D /* license.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = license.md; sourceTree = "<group>"; };
+		1BA306FA291A6FB400F15B1D /* ofxVstHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxVstHost.cpp; sourceTree = "<group>"; };
+		1BA306FB291A6FB400F15B1D /* ofxVstHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxVstHost.h; sourceTree = "<group>"; };
+		1BA306FC291A6FB400F15B1D /* ofxVstHostPluginLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxVstHostPluginLoader.h; sourceTree = "<group>"; };
+		1BA30700291A709300F15B1D /* midievent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = midievent.cpp; sourceTree = "<group>"; };
+		1BA30706291A748500F15B1D /* audio.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = audio.cpp; sourceTree = "<group>"; };
+		1BA30707291A748500F15B1D /* audio.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = audio.hpp; sourceTree = "<group>"; };
+		1BA3070A291A7BE900F15B1D /* aeffeditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aeffeditor.h; sourceTree = "<group>"; };
+		1BA3070B291A7BEA00F15B1D /* audioeffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audioeffect.h; sourceTree = "<group>"; };
+		1BA3070C291A7BEA00F15B1D /* audioeffectx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audioeffectx.h; sourceTree = "<group>"; };
+		1BA3070D291A7CB000F15B1D /* vstfxstore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vstfxstore.h; sourceTree = "<group>"; };
+		1BA3070E291A7CB000F15B1D /* aeffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aeffect.h; sourceTree = "<group>"; };
+		1BA3070F291A7CB000F15B1D /* aeffectx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aeffectx.h; sourceTree = "<group>"; };
+		1BA30710291A926D00F15B1D /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		1BB40E0C28C1AA8B00734BFC /* MainView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainView.h; sourceTree = "<group>"; };
 		1BB40E0D28C1AA8B00734BFC /* MainView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MainView.mm; sourceTree = "<group>"; };
 		1BB40E1228C3280100734BFC /* keyboard_layout.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = keyboard_layout.json; sourceTree = "<group>"; };
 		1BB40E1428C32AA600734BFC /* config.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = config.cpp; sourceTree = "<group>"; };
 		1BB40E1528C32AA600734BFC /* config.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = config.hpp; sourceTree = "<group>"; };
-		1BB40E1C28C5EA1300734BFC /* libjsoncpp.1.9.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjsoncpp.1.9.5.dylib; path = tinypiano/libjsoncpp.1.9.5.dylib; sourceTree = "<group>"; };
 		1BB40E1F28CC745200734BFC /* drawcontext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = drawcontext.cpp; sourceTree = "<group>"; };
 		1BB40E2028CC745200734BFC /* drawcontext.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = drawcontext.hpp; sourceTree = "<group>"; };
+		1BF164C629288F8D002EB078 /* midievent.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = midievent.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,7 +64,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1BB40E1E28C5EB1A00734BFC /* libjsoncpp.1.9.5.dylib in Frameworks */,
+				1BA30711291A926D00F15B1D /* AudioToolbox.framework in Frameworks */,
+				1BA306F229191D4A00F15B1D /* libjsoncpp.1.9.5.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,12 +77,16 @@
 			children = (
 				1B704A3628C0829600B50BFE /* tinypiano */,
 				1BB40E1828C5E71E00734BFC /* Frameworks */,
+				1BA306ED29191B8200F15B1D /* tinypiano.app */,
 			);
 			sourceTree = "<group>";
 		};
 		1B704A3628C0829600B50BFE /* tinypiano */ = {
 			isa = PBXGroup;
 			children = (
+				1BF164C629288F8D002EB078 /* midievent.hpp */,
+				1BA30709291A7BCA00F15B1D /* vst */,
+				1BA306F6291A6F5800F15B1D /* ofxvsthost */,
 				1BB40E0F28C3268600734BFC /* json */,
 				1B704A3728C0829600B50BFE /* AppDelegate.h */,
 				1B704A3828C0829600B50BFE /* AppDelegate.m */,
@@ -77,8 +102,35 @@
 				1BB40E1528C32AA600734BFC /* config.hpp */,
 				1BB40E1F28CC745200734BFC /* drawcontext.cpp */,
 				1BB40E2028CC745200734BFC /* drawcontext.hpp */,
+				1BA30700291A709300F15B1D /* midievent.cpp */,
+				1BA30706291A748500F15B1D /* audio.cpp */,
+				1BA30707291A748500F15B1D /* audio.hpp */,
 			);
 			path = tinypiano;
+			sourceTree = "<group>";
+		};
+		1BA306F6291A6F5800F15B1D /* ofxvsthost */ = {
+			isa = PBXGroup;
+			children = (
+				1BA306F9291A6FB400F15B1D /* license.md */,
+				1BA306FA291A6FB400F15B1D /* ofxVstHost.cpp */,
+				1BA306FB291A6FB400F15B1D /* ofxVstHost.h */,
+				1BA306FC291A6FB400F15B1D /* ofxVstHostPluginLoader.h */,
+			);
+			path = ofxvsthost;
+			sourceTree = "<group>";
+		};
+		1BA30709291A7BCA00F15B1D /* vst */ = {
+			isa = PBXGroup;
+			children = (
+				1BA3070E291A7CB000F15B1D /* aeffect.h */,
+				1BA3070F291A7CB000F15B1D /* aeffectx.h */,
+				1BA3070D291A7CB000F15B1D /* vstfxstore.h */,
+				1BA3070A291A7BE900F15B1D /* aeffeditor.h */,
+				1BA3070B291A7BEA00F15B1D /* audioeffect.h */,
+				1BA3070C291A7BEA00F15B1D /* audioeffectx.h */,
+			);
+			path = vst;
 			sourceTree = "<group>";
 		};
 		1BB40E0F28C3268600734BFC /* json */ = {
@@ -92,7 +144,8 @@
 		1BB40E1828C5E71E00734BFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1BB40E1C28C5EA1300734BFC /* libjsoncpp.1.9.5.dylib */,
+				1BA30710291A926D00F15B1D /* AudioToolbox.framework */,
+				1BA306F129191D4A00F15B1D /* libjsoncpp.1.9.5.dylib */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -114,7 +167,7 @@
 			);
 			name = tinypiano;
 			productName = tinypiano;
-			productReference = 1B704A3428C0829600B50BFE /* tinypiano.app */;
+			productReference = 1BA306ED29191B8200F15B1D /* tinypiano.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -154,6 +207,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1BA306FD291A6FB400F15B1D /* license.md in Resources */,
 				1BB40E1328C3280100734BFC /* keyboard_layout.json in Resources */,
 				1B704A3E28C0829A00B50BFE /* Assets.xcassets in Resources */,
 				1B704A4128C0829A00B50BFE /* Main.storyboard in Resources */,
@@ -167,8 +221,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1BA306FE291A6FB400F15B1D /* ofxVstHost.cpp in Sources */,
 				1B704A3C28C0829600B50BFE /* ViewController.m in Sources */,
 				1BB40E0E28C1AA8B00734BFC /* MainView.mm in Sources */,
+				1BA30701291A709300F15B1D /* midievent.cpp in Sources */,
+				1BA30708291A748500F15B1D /* audio.cpp in Sources */,
 				1B704A4328C0829A00B50BFE /* main.mm in Sources */,
 				1B704A3928C0829600B50BFE /* AppDelegate.m in Sources */,
 				1BB40E1628C32AA600734BFC /* config.cpp in Sources */,

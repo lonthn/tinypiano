@@ -31,7 +31,7 @@ const std::map<FunctionId, std::string>           FN_TEXT =
     {kLeftIntensity,"LV"}, {kRightIntensity,"RV"}
 };
 
-const std::map<KeyCode, KeyboardMapping::Info> DEFUALT_KEY_MAP_INFOS =
+const std::map<KeyCode, KeyboardMapping::Info>    DEFUALT_KEY_MAP_INFOS =
 {
     {kGrave, {7, 0, 0, 0}},
     {k1, {1, 1, 0, 0}},
@@ -143,17 +143,68 @@ const std::map<KeyCode, KeyboardMapping::Info> DEFUALT_KEY_MAP_INFOS =
 
 GlobalData data;
 
+// Indexes of white key
+// 1 2 3 4 5 6 7 8 9 0 1 2
+// 1   2   3 4   5   6   7
+static int         major_mode[7] = {1, 3, 5, 6, 8, 10, 12};
+
+// Modes offset
+static int         modes[12] = {0, 1, 2, 3, 4, 5, 6, 7, -4, -3, -2, -1,};
+static const char* modes_text[12] = {
+    "C","♯C","D","♯D", "E", "F", "♯F", "G", "♯G", "A", "♯A", "B",
+};
+
+const char* config_mode_text(int index) {
+    return modes_text[index];
+}
+
+
 void config_set_resource_path(const std::string& path) {
     resource_path = path;
+}
+
+void config_chg_mode(int modifier) {
+    data.mode += modifier;
+    if (data.mode < 0) {
+        data.mode = 11;
+    }
+    if (data.mode > 11) {
+        data.mode = 0;
+    }
+}
+
+void config_chg_octave(uint8_t fn, int modifier) {
+    int8_t &octave = fn==kLeftAdjOctave ? data.lOffOctave : data.rOffOctave;
+    octave += modifier;
+    octave = std::min((int) octave, 1);
+    octave = std::max((int) octave, -1);
+}
+
+void config_chg_intensity(uint8_t fn, int modifier) {
+    int &intensity = fn==kLeftIntensity ? data.lIntensity : data.rIntensity;
+    intensity += modifier;
+    intensity = std::min(intensity, 127);
+    intensity = std::max(intensity, 0);
 }
 
 std::string config_get_fn_text(FunctionId fn, int modifier) {
     if (modifier > 0) {
         return FN_TEXT.at(fn) + "+";
     } else if (modifier < 0) {
-        return FN_TEXT.at(fn) + "-";
+        return "-" + FN_TEXT.at(fn);
     }
     return FN_TEXT.at(fn);
+}
+
+bool config_is_fn(int num) {
+    return num & 0x80;
+}
+
+uint8_t config_real_note(const KeyboardMapping::Info& map) {
+    uint8_t note = 23 + (12 * (map.pith + 3)) + major_mode[map.note - 1];
+    return note + map.modifier  // # or b
+                + modes[data.mode] // mode
+                + (map.left ? data.lOffOctave*12 : data.rOffOctave*12); // Octave
 }
 
 KeyboardLayout config_get_keyboard_layout() {
@@ -221,6 +272,6 @@ KeyboardMapping config_get_curr_keyboard_mapping() {
     return config_default_keyboard_mapping();
 }
 
-GlobalData& config_get_global_data_rer() {
+GlobalData& config_get_global_data_ref() {
     return data;
 }

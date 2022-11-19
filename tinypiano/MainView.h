@@ -10,24 +10,6 @@
 
 //NS_ASSUME_NONNULL_BEGIN
 
-struct KeyboardButton {
-    CGRect frame;
-    CFStringRef text;
-    
-    struct {
-        uint8_t note;
-        int8_t  pith;
-        int8_t  modifier;
-        int8_t  channel;
-        bool    left;
-    } map;
-};
-
-struct PianoButton {
-    CGRect frame;
-    bool is_black;
-};
-
 @interface MainView : NSView
 
 - (void) initView;

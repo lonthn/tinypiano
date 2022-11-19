@@ -56,6 +56,14 @@ public:
     };
     void draw_mbutton(MButtonStyle style, CGRect rect, CGColorRef back, CGColorRef fore);
     
+    enum VertiAlign {
+        VALIGN_TOP,
+        VALIGN_MIDDLE,
+        VALIGN_BOTTOM,
+    };
+    void draw_string(CFStringRef str, CGRect rect, CTFontRef font,
+                     CGColorRef color, VertiAlign valign = VALIGN_MIDDLE);
+    
     
 public:
     CGRect real_rect(CGRect rect);
