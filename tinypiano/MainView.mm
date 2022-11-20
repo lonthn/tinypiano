@@ -18,6 +18,7 @@
 struct KeyboardButton {
     CGRect frame;
     CFStringRef text;
+    bool push_down;
     
     KeyboardMapping::Info map;
 };
@@ -25,6 +26,8 @@ struct KeyboardButton {
 struct PianoButton {
     CGRect frame;
     bool is_black;
+    bool push_down;
+    bool left_push;
 };
 
 
@@ -62,6 +65,8 @@ CFStringRef cfstr_from_str(const char *str) {
     CGColorRef rintensity_color;
     CGColorRef fn_val_color;
     CGColorRef piano_black_button_color;
+    CGColorRef lkeydown_color;
+    CGColorRef rkeydown_color;
     
     float width_ratio;
     float height_ratio;
@@ -70,6 +75,7 @@ CFStringRef cfstr_from_str(const char *str) {
     float keyboard_height;
     float keyboard_height_rate;
     float fn_area_height_rate;
+    float midikeyboard_height_rate;
     struct KeyboardButton *kb_buttons[127];
     struct PianoButton *midi_buttons[127];
     std::map<uint8_t, uint8_t> lbutton_state;
@@ -81,8 +87,8 @@ CFStringRef cfstr_from_str(const char *str) {
 - (void) initView {
     keyboard_width = 0;
     keyboard_height = 0;
-    keyboard_height_rate = 2.4/4.0;
-    fn_area_height_rate = 0.5/4.0;
+    keyboard_height_rate = 0.7;
+    midikeyboard_height_rate = 0.3;
     
     // Black theme.
 //    key_lbutton_down_ = CColor(131, 178, 35);
@@ -107,6 +113,15 @@ CFStringRef cfstr_from_str(const char *str) {
     
     piano_black_button_color = cgcolor(100, 100, 100);
     
+    
+//    key_down_colors_[0] = CColor(176, 213, 223);
+//    key_down_colors_[1] = CColor(185, 222, 201);
+//    key_down_colors_[2] = CColor(200, 173, 196);
+//    key_down_colors_[3] = CColor(173, 213, 162);
+//    key_down_colors_[4] = CColor(233, 221, 182);
+    lkeydown_color = cgcolor(176, 213, 223);
+    rkeydown_color = cgcolor(185, 222, 201);
+    
     // Create draw area of memory.
     NSSize frameSize = self.frame.size;
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
@@ -120,10 +135,43 @@ CFStringRef cfstr_from_str(const char *str) {
     
     // Initialize keyboard layout.
     [self initKeyboardButtons];
-    [self initMIDIKeyboardButtons];
+    [self initMidiKeyboardButtons];
     
     midievent_open();
     audio.open();
+    
+    [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskKeyDown
+                                          handler:^(NSEvent *event) {
+        if ([self keyDownHandler:event]) {
+            return (NSEvent *) nil;
+        }
+        return event;
+    }];
+    [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskKeyUp
+                                          handler:^(NSEvent *event) {
+        
+        if ([self keyUpHandler:event]) {
+            return (NSEvent *) nil;
+        }
+        return event;
+    }];
+//    [NSEvent addLocalMonitorForEventsMatchingMask:NSEventTypeFlagsChanged
+//                                          handler:^(NSEvent *event) {
+//        static bool keydown[256];
+//
+//        keydown[event.keyCode] = !keydown[event.keyCode];
+//        bool handle = false;
+//        if (keydown[event.keyCode]) {
+//            handle = [self keyDownHandler:event];
+//        } else {
+//            handle = [self keyUpHandler:event];
+//        }
+//
+//        if (handle) {
+//            return (NSEvent *) nil;
+//        }
+//        return event;
+//    }];
 }
 
 - (void) initKeyboardButtons {
@@ -134,12 +182,13 @@ CFStringRef cfstr_from_str(const char *str) {
         auto& map = mapping.keys[int(key.code)];
         self->kb_buttons[key.code] = new KeyboardButton();
         auto* button = self->kb_buttons[key.code];
+        button->push_down = false;
         button->map.note = map.note;
         button->map.pith = map.pith;
         button->map.modifier = map.modifier;
         button->map.left = map.left;
         button->frame = CGRectInset(CGRectMake(key.x, key.y, key.w, key.h),
-                                    0.05, 0.05);
+                                    0.07, 0.07);
         std::string text;
         if (button->map.note > 100)
             text = config_get_fn_text(FunctionId(button->map.note), button->map.modifier);
@@ -149,54 +198,56 @@ CFStringRef cfstr_from_str(const char *str) {
                                                  kCFStringEncodingUTF8);
     }
     // 0.25 is right margin
-    self->keyboard_width = layout.width + 0.25;
-    self->keyboard_height = layout.height;
+    keyboard_width = layout.width + 0.25;
+    keyboard_height = layout.height;
     
-    width_ratio = self.frame.size.width / self->keyboard_width;
-    height_ratio = (self.frame.size.height * keyboard_height_rate) / self->keyboard_height;
+    width_ratio = self.frame.size.width / keyboard_width;
+    height_ratio = (self.frame.size.height * keyboard_height_rate) / keyboard_height;
 }
 
-- (void) initMIDIKeyboardButtons {
+- (void) initMidiKeyboardButtons {
     // 0: white key, 1: black key
     const int layout[] = {0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0};
     
+    float xpadd = 0.3;
+    float ypadd = 0.25;
     float piano_keyboard_height = (keyboard_height / keyboard_height_rate)
-                                * (1-(keyboard_height_rate+fn_area_height_rate)) - 0.25;
+                                * midikeyboard_height_rate - ypadd;
     
     float white_width = (keyboard_width - 0.55) / 52;
     float black_width = white_width * 0.65;
     
-    float x = 0.3;
-    float y = keyboard_height + (self->keyboard_height / keyboard_height_rate) * fn_area_height_rate + 0.25;
+    float x = xpadd;
+    float y = keyboard_height + ypadd;
     
     for (int i = 21; i < 21+88; i++) {
         midi_buttons[i] = new PianoButton();
         midi_buttons[i]->is_black = layout[i%12];
+        midi_buttons[i]->push_down = false;
+        midi_buttons[i]->frame = CGRectMake(x, y, white_width, piano_keyboard_height);
         if (midi_buttons[i]->is_black) {
-            midi_buttons[i]->frame = CGRectMake(x - (white_width*0.3),
-                                               y,
-                                               black_width,
-                                               piano_keyboard_height * 0.55);
-        } else {
-            midi_buttons[i]->frame = CGRectMake(x,
-                                               y,
-                                               white_width,
-                                               piano_keyboard_height);
-            x += white_width;
+            midi_buttons[i]->frame.origin.x -= (white_width*0.3);
+            midi_buttons[i]->frame.size.width = black_width;
+            midi_buttons[i]->frame.size.height *= 0.55;
+            continue;
         }
+        x += white_width;
     }
 }
 
-- (void) keyDown:(NSEvent *)event {
-    uint16_t keycode = event.keyCode;
-    bool repeat = event.ARepeat;
-    if (repeat) {
-        return;
+- (bool) keyDownHandler:(NSEvent *)event {
+    if (event.type != NSEventTypeKeyDown &&
+        event.type != NSEventTypeFlagsChanged) {
+        return false;
+    }
+    if (event.type == NSEventTypeKeyDown && event.isARepeat) {
+        return true;
     }
     
+    uint16_t keycode = event.keyCode;
     auto *kb = kb_buttons[keycode];
     if (kb == nullptr) {
-        return;
+        return false;
     }
     
     if (config_is_fn(kb->map.note)) {
@@ -221,7 +272,7 @@ CFStringRef cfstr_from_str(const char *str) {
             btn_state.clear();
         }
         [self setNeedsDisplay:TRUE];
-        return;
+        return true;
     }
     
     uint8_t note = config_real_note(kb->map);
@@ -239,19 +290,24 @@ CFStringRef cfstr_from_str(const char *str) {
     } else {
         rbutton_state[note] = 1;
     }
+    
+    kb->push_down = true;
+    midi_buttons[note]->push_down = true;
+    midi_buttons[note]->left_push = kb->map.left;
+    
     [self setNeedsDisplay:TRUE];
+    return true;
 }
 
-- (void) keyUp:(NSEvent *)event {
-    uint16_t keycode = event.keyCode;
-    bool repeat = event.ARepeat;
-    if (repeat) {
-        return;
+- (bool) keyUpHandler:(NSEvent *)event {
+    if (event.type == NSEventTypeKeyUp && event.isARepeat) {
+        return false;
     }
     
+    uint16_t keycode = event.keyCode;
     auto *kb = kb_buttons[keycode];
     if (kb == nullptr) {
-        return;
+        return false;
     }
     
     uint8_t note = config_real_note(kb->map);
@@ -262,7 +318,22 @@ CFStringRef cfstr_from_str(const char *str) {
     } else {
         rbutton_state[note] = 0;
     }
-    [self setNeedsDisplay:FALSE];
+    
+    kb->push_down = false;
+    midi_buttons[note]->push_down = false;
+    
+    [self setNeedsDisplay:TRUE];
+    return true;
+}
+
+- (void) flagsChanged:(NSEvent *)event {
+    static bool keydown[256];
+    keydown[event.keyCode] = !keydown[event.keyCode];
+    if (keydown[event.keyCode]) {
+        [self keyDownHandler:event];
+    } else {
+        [self keyUpHandler:event];
+    }
 }
 
 - (void) drawRect:(NSRect)dirtyRect {
@@ -286,8 +357,7 @@ CFStringRef cfstr_from_str(const char *str) {
     dcontext.set_coord_reverse(true);
     
     [self drawKeyboard:dcontext];
-    [self drawFnArea:dcontext];
-    [self drawPianoKeyboard:dcontext];
+    [self drawMidiKeyboard:dcontext];
     
 //    CGImageRef image = CGBitmapContextCreateImage(self->memContext);
 //    CGContextDrawImage(context, self.frame, image);
@@ -338,7 +408,12 @@ CFStringRef cfstr_from_str(const char *str) {
             continue;
         }
         
-        dcontext.set_fill_color(keybtn_color);
+        if (button->push_down) {
+            auto color = button->map.left ? lkeydown_color : rkeydown_color;
+            dcontext.set_fill_color(color);
+        } else {
+            dcontext.set_fill_color(keybtn_color);
+        }
         dcontext.fill_rrect(rect, 2, false);
         dcontext.draw_note(button->text, button->map.pith, button->map.modifier,
                            rect, font, mfont, keytxt_color, false);
@@ -376,8 +451,8 @@ CFStringRef cfstr_from_str(const char *str) {
         } else {
             str_val = cfstr_from_int(val);
         }
-        dcontext.draw_string(str_val, CGRectInset(rect,0,3), mfont, fn_val_color,
-                             DrawContext::VALIGN_TOP);
+        dcontext.draw_string(str_val, CGRectInset(rect,3,3), mfont, fn_val_color,
+                             DrawContext::VALIGN_TOP, DrawContext::HALIGN_RIGHT);
         CFRelease(str_val);
         
         dcontext.draw_string(down->text,
@@ -390,7 +465,7 @@ CFStringRef cfstr_from_str(const char *str) {
         dcontext.draw_rrect(CGRectInset(rect, 1, 1), radius, false);
         
         if (val != 0 || min != 0 || max != 0) {
-            float pos = ((rect.size.width - 2) / (max-min)) * (val-min);
+            float pos = ((rect.size.width - 3) / (max-min)) * (val-min);
             CGPoint from = CGPointMake(rect.origin.x + 1,
                                        rect.origin.y + rect.size.height - 3);
             CGPoint to   = CGPointMake(from.x + pos,
@@ -418,67 +493,35 @@ CFStringRef cfstr_from_str(const char *str) {
     }
 }
 
-- (void) drawFnArea:(DrawContext&)dcontext {
-    float top = keyboard_height + 0.25;
-    float fn_area_height = (self->keyboard_height / keyboard_height_rate) * fn_area_height_rate - 0.25;
-    
-    CGRect rect = CGRectMake(0.3, top, keyboard_width - 0.55, fn_area_height);
-    dcontext.real_rect(&rect);
-    
-    dcontext.set_draw_color(keybtn_color);
-    dcontext.set_line_width(1);
-    dcontext.draw_line(rect.origin,
-                       CGPointMake(rect.origin.x + rect.size.width, rect.origin.y), false);
-    
-    float width = rect.size.height * 0.7;
-    CGRect btnrect = CGRectMake(rect.origin.x+(rect.size.height-width)/2, rect.origin.y+(rect.size.height-width)/2,
-                                width, width);
-    dcontext.draw_mbutton(DrawContext::kTriangle, btnrect, keybtn_color, piano_black_button_color);
-    
-    btnrect.origin.x += btnrect.size.width + 10;
-    dcontext.draw_mbutton(DrawContext::kCircle, btnrect, keybtn_color, piano_black_button_color);
-    
-    btnrect.origin.x += btnrect.size.width + 10;
-    dcontext.draw_mbutton(DrawContext::kRect, btnrect, keybtn_color, piano_black_button_color);
-    
-    dcontext.set_draw_color(keybtn_color);
-    dcontext.set_line_width(1);
-    dcontext.draw_line(CGPointMake(rect.origin.x, rect.origin.y + rect.size.height),
-                       CGPointMake(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height), false);
-    
-    
-    // function values
-    dcontext.set_line_width(2);
-    CGRect inforect = CGRectMake(rect.size.width - width, rect.origin.y + (rect.size.height-width)/2, width, width);
-    dcontext.set_draw_color(rintensity_color);
-    dcontext.draw_rrect(inforect, 2, false);
-    inforect.origin.x -= width + 4;
-    dcontext.set_draw_color(lintensity_color);
-    dcontext.draw_rrect(inforect, 2, false);
-    inforect.origin.x -= width + 6;
-    dcontext.set_draw_color(adj_rotc_color);
-    dcontext.draw_rrect(inforect, 2, false);
-    inforect.origin.x -= width + 4;
-    dcontext.set_draw_color(adj_lotc_color);
-    dcontext.draw_rrect(inforect, 2, false);
-}
-
-- (void) drawPianoKeyboard:(DrawContext&)dcontext {
+- (void) drawMidiKeyboard:(DrawContext&)dcontext {
     dcontext.set_draw_color(keybtn_color);
     dcontext.set_line_width(1);
     for (int i = 21; i < 21+88; i++) {
         auto *button = midi_buttons[i];
         CGRect rect = dcontext.real_rect(button->frame);
         if (!button->is_black) {
-            dcontext.set_fill_color(back_color);
+            if (button->push_down) {
+                auto color = button->left_push ? lkeydown_color : rkeydown_color;
+                dcontext.set_fill_color(color);
+            } else {
+                dcontext.set_fill_color(back_color);
+            }
             dcontext.fill_rect(rect, false);
             dcontext.draw_rect(rect, false);
         }
         auto* pre_button = midi_buttons[i-1];
         if (pre_button != NULL && pre_button->is_black) {
             rect = dcontext.real_rect(pre_button->frame);
-            dcontext.set_fill_color(piano_black_button_color);
+            if (pre_button->push_down) {
+                auto color = pre_button->left_push ? lkeydown_color : rkeydown_color;
+                dcontext.set_fill_color(color);
+            } else {
+                dcontext.set_fill_color(piano_black_button_color);
+            }
             dcontext.fill_rect(rect, false);
+            if (pre_button->push_down) {
+                dcontext.draw_rect(rect, false);
+            }
         }
     }
 }

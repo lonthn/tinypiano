@@ -61,8 +61,13 @@ public:
         VALIGN_MIDDLE,
         VALIGN_BOTTOM,
     };
-    void draw_string(CFStringRef str, CGRect rect, CTFontRef font,
-                     CGColorRef color, VertiAlign valign = VALIGN_MIDDLE);
+    enum HorizAlign {
+        HALIGN_LEFT,
+        HALIGN_MIDDLE,
+        HALIGN_RIGHT,
+    };
+    void draw_string(CFStringRef str, CGRect rect, CTFontRef font, CGColorRef color,
+                     VertiAlign valign = VALIGN_MIDDLE, HorizAlign halign = HALIGN_MIDDLE);
     
     
 public:

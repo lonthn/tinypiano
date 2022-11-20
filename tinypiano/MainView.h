@@ -13,6 +13,8 @@
 @interface MainView : NSView
 
 - (void) initView;
+- (bool) keyDownHandler:(NSEvent *)event;
+- (bool) keyUpHandler:(NSEvent *)event;
 
 @end
 

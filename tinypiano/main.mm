@@ -7,6 +7,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import "AppDelegate.h"
+
 #include "config.hpp"
 #include <string>
 

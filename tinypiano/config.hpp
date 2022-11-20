@@ -173,7 +173,7 @@ struct GlobalData {
     int8_t lOffOctave = 0;
     int8_t rOffOctave = 0;
 
-    int lIntensity = 50;
+    int lIntensity = 40;
     int rIntensity = 40;
 };
 

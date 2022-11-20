@@ -223,6 +223,7 @@ void DrawContext::draw_note(CFStringRef note, int pith, int modifier, CGRect rec
     
     point.x = rect.origin.x + (rect.size.width - 2) / 2;
     if (pith > 0) {
+        point.y -= 1;
         for (int i = 0; i < pith; i++) {
             point.y -= 3;
             fill_ellipse_in_rect(CGRectMake(point.x, point.y, 2, 2), false);
@@ -277,20 +278,27 @@ void DrawContext::draw_mbutton(MButtonStyle style, CGRect rect,
     }
 }
 
-void DrawContext::draw_string(CFStringRef str, CGRect rect, CTFontRef font,
-                              CGColorRef color, VertiAlign valign) {
+void DrawContext::draw_string(CFStringRef str, CGRect rect, CTFontRef font, CGColorRef color,
+                              VertiAlign valign, HorizAlign halign) {
     set_fill_color(color);
     
     CTLineRef line = create_line(str, font, color);
     CGSize    size = line_get_size(line);
     
-    CGPoint point = CGPointMake(rect.origin.x + ((rect.size.width-size.width)/2), 0);
+    CGPoint point;
     if (valign == VALIGN_TOP) {
         point.y = rect.origin.y;
     } else if (valign == VALIGN_MIDDLE) {
         point.y = rect.origin.y + (rect.size.height-size.height)/2;
     } else if (valign == VALIGN_BOTTOM) {
         point.y = rect.origin.y + rect.size.height - size.height;
+    }
+    if (halign == HALIGN_LEFT) {
+        point.x = rect.origin.x;
+    } else if (halign == HALIGN_MIDDLE) {
+        point.x = rect.origin.x + (rect.size.width-size.width)/2;
+    } else if (halign == HALIGN_RIGHT) {
+        point.x = rect.origin.x + rect.size.width - size.width;
     }
     draw_line(line, point, false);
     

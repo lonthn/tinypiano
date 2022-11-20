@@ -22,10 +22,13 @@ OSStatus au__process(void *inRefCon,
 }
 
 AudioClient::AudioClient() {
+    events_ = (VstEvents *) malloc(sizeof(VstEvents)
+                                   + sizeof(VstEvent) * (MAX_EVENT_NUM-2));
 }
 
 AudioClient::~AudioClient() {
     close();
+    free(events_);
 }
 
 void AudioClient::open() {
@@ -112,15 +115,11 @@ int AudioClient::process(AudioUnitRenderActionFlags *ioActionFlags,
                          UInt32 inBusNumber,
                          UInt32 inNumberFrames,
                          AudioBufferList *ioData) {
+    events_->numEvents = 0;
+    events_->reserved = 0;
     
-    static struct MoreEvents : VstEvents {
-      VstEvent *data[MAX_EVENT_NUM-2];
-    } events;
-    events.numEvents = 0;
-    events.reserved = 0;
-    
-    midievent_read(&events, MAX_EVENT_NUM);
-    vst_host_.procEvents(&events);
+    midievent_read(events_, MAX_EVENT_NUM);
+    vst_host_.procEvents(events_);
     
     float_t *left = static_cast<float_t *> (ioData->mBuffers[0].mData);
     float_t *right = static_cast<float_t *> (ioData->mBuffers[1].mData);
