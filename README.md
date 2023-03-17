@@ -1,2 +1,2 @@
 # tinypiano
-A tiny virtual midi piano app for Mac. (Incomplete)
+A tiny virtual midi piano for Mac. (Incomplete)
